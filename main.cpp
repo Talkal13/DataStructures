@@ -1,6 +1,7 @@
 #include "headers/heaps/williams.h"
 #include "headers/heaps/sesgados.h"
 #include "headers/heaps/binomial.h"
+#include "headers/heaps/fibonacci.h"
 #include <iostream>
 
 using namespace std;
@@ -37,5 +38,6 @@ void console(PriorityQueue<> *q) {
 int main(int argc, char **argv) {
     Binomial<> b = Binomial<>();
     Williams<> s = Williams<>(20);
-    console(&b);
+    FibonacciH<> f = FibonacciH<>();
+    console(&f);
 }
