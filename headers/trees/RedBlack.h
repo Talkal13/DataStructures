@@ -25,7 +25,7 @@ public:
         return (search(_root, key) != nullptr) ? true : false;
     }
     void remove(T key) {
-        _root = remove(_root, key);
+        //_root = remove(_root, key);
         _root->color = BLACK;
     }
 
@@ -72,10 +72,31 @@ private:
         return fixUp(x);
     }
 
+    NodeRB<T>* deleteMin(NodeRB<T> *x, T key) {
+
+        if (x->l == nullptr) return nullptr;
+        if (isNotRed(x->l) && isNotRed(x->l->r))
+            x = moveRedLeft(x);
+        
+        x->l = deleteMax(x->l);
+
+        return fixUp(x);
+    }
+
     NodeRB<T>* moveRedRight(NodeRB<T> *x) {
         colorFlip(x);
         if (x->l != nullptr && isRead(x->l->l)) {
             x = rotateRight(x);
+            colorFlip(x);
+        }
+        return x;
+    }
+
+    NodeRB<T>* moveRedLeft(NodeRB<T> *x) {
+        colorFlip(x);
+        if (x->r != nullptr && isRed(x->r->l)) {
+            x->r = rotateRight(x->r);
+            x = rotateLeft(x);
             colorFlip(x);
         }
         return x;
