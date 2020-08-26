@@ -59,8 +59,6 @@ void console(BinarySearchTree<> *q) {
         case 'p':
             q->print();
             break;
-        default:
-            return;
         }
         cin >> i;
     }

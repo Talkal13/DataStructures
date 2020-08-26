@@ -1,6 +1,7 @@
 #include "BST.h"
 
 #include <cmath>
+#include <utility>
 
 template <class T = int>
 struct NodeAVL {
@@ -22,8 +23,9 @@ public:
         return (search(_root, key) != nullptr) ? true : false;
     }
     void remove(T key) {
-        
+        _root = remove(_root, key);
     }
+
     void print() {
         print(_root);
         std::cout << std::endl;
@@ -31,7 +33,6 @@ public:
 private:
 
     NodeAVL<T>* insert(NodeAVL<T> *a, T key) {
-        bool ins = false;
         if (a == nullptr) {
             NodeAVL<T>* u = new NodeAVL<T>;
             u->key = key;
@@ -49,10 +50,48 @@ private:
         return a;
     }
 
+    NodeAVL<T>* remove(NodeAVL<T> *a, T key) {
+        if (a == nullptr) return a;
+        else if (key < a->key) {
+            a->l = remove(a->l, key);
+            return balance(a);
+        } else if (key == a->key) {
+            NodeAVL<T> *l, *r;
+            r = a->r; l = a->l;
+            if (r == nullptr) {
+                delete a;
+                return l;
+            } else {
+                NodeAVL<T> *minr;
+                std::pair<NodeAVL<T>*, NodeAVL<T>*> pair = switchMin(r);
+                minr = pair.first;
+                minr->l = l;
+                minr->r = pair.second;
+                return balance(minr);
+            }
+        } else {
+            a->r = remove(a->r, key);
+            return balance(a);
+        }
+    }
+
     NodeAVL<T>* search(NodeAVL<T> *a, T key) {
         if (a == nullptr || key == a->key) return a;
         if (key < a->key) return search(a->l, key);
         else return search(a->r, key);
+    }
+
+    std::pair<NodeAVL<T>*, NodeAVL<T>*> switchMin(NodeAVL<T> *x) {
+        NodeAVL<T> *l = x->l, *r = x->r;
+        if (l == nullptr) {
+            x->r = nullptr;
+            return std::make_pair(x, r);
+        }
+        else {
+            std::pair<NodeAVL<T>*, NodeAVL<T>*> t = switchMin(x->l);
+            if (l == t.first) x->l = t.second;
+            return std::make_pair(t.first, balance(x));
+        }
     }
 
     NodeAVL<T>* balance(NodeAVL<T> *x) {
