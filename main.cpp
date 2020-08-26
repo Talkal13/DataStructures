@@ -3,6 +3,7 @@
 #include "headers/heaps/binomial.h"
 #include "headers/heaps/fibonacci.h"
 #include "headers/trees/AVL.h"
+#include "headers/trees/RedBlack.h"
 #include <iostream>
 
 using namespace std;
@@ -65,6 +66,6 @@ void console(BinarySearchTree<> *q) {
 }
 
 int main(int argc, char **argv) {
-    AVL<> a = AVL<>();
+    RedBlackTree<> a = RedBlackTree<>();
     console(&a);
 }
