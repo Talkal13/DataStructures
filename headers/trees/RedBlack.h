@@ -18,14 +18,15 @@ class RedBlackTree : public BinarySearchTree<T> {
 public:
     void insert(T key) {
         _root = insert(_root, key);
-        if (_root->color) _root->color = BLACK;
+        _root->color = BLACK;
     }
 
     bool search(T key) {
         return (search(_root, key) != nullptr) ? true : false;
     }
     void remove(T key) {
-        //_root = remove(_root, key);
+        _root = remove(_root, key);
+        _root->color = BLACK;
     }
 
     void print() {
@@ -43,8 +44,7 @@ private:
         }
 
         // Way down
-        NodeRB<T> *r = x->r, *l = x->l;
-        if (l != nullptr && l->color && r != nullptr && r->color) // both red 
+        if (isRed(x->l) && isRed(x->r)) // both red 
             x = colorFlip(x);
 
         // Insert
@@ -52,11 +52,32 @@ private:
         else if (key > x->key) x->r = insert(x->r, key);
 
         // Way up
-        if (r != nullptr && r->color) 
+        if (isRed(x->r)) 
             x = rotateLeft(x);
-        if (l != nullptr && l->color && l->l != nullptr && l->l->color)
+        if (isRed(x->l) && isRed(x->l->l))
             x = rotateRight(x);
 
+        return x;
+    }
+
+    NodeRB<T>* deleteMax(NodeRB<T> *x, T key) {
+        if (isRed(x->l))
+            x = rotateRight(x);
+        if (x->r == nullptr) return nullptr;
+        if (isNotRed(x->r) && isNotRed(x->r->r))
+            x = moveRedRigth(x);
+        
+        x->r = deleteMax(x->r);
+
+        return fixUp(x);
+    }
+
+    NodeRB<T>* moveRedRight(NodeRB<T> *x) {
+        colorFlip(x);
+        if (x->l != nullptr && isRead(x->l->l)) {
+            x = rotateRight(x);
+            colorFlip(x);
+        }
         return x;
     }
 
@@ -86,6 +107,26 @@ private:
         x->l->color = !x->l->color;
         x->r->color = !x->r->color;
         return x;
+    }
+
+    NodeRB<T>* fixUp(NodeRB<T> *x) {
+        if (x == nullptr) return x;
+        if (isRed(x->r))
+            x = rotateLeft(x);
+        if (isRed(x->l) && isRed(x->l->l))
+            x = rotateRight(x);
+        if (isRed(x->l) && isRed(x->r)) {
+            x = colorFlip(x);
+        }
+        return x;
+    }
+
+    bool isRed(NodeRB<T> *x) {
+        return x != nullptr && x->color;
+    }
+
+    bool isNotRed(NodeRB<T> *x) {
+        return x != nullptr && !x->color;
     }
 
     NodeRB<T>* search(NodeRB<T> *a, T key) {
