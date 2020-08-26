@@ -1,7 +1,7 @@
 #pragma once
 
 #include "priorityQueue.h"
-#include "../trees/bt.h"
+#include "../trees/BST.h"
 
 template <class T=int>
 class SkewHeap : public PriorityQueue<T> {
